@@ -1,7 +1,19 @@
 .App {
   text-align: center;
 }
-
+.particles{
+  position: "absolute";
+  z-index: -1;
+top: 0;
+left: 0;
+}
+button{
+  cursor: pointer;
+}
+.center{
+  display:flex;
+  justify-content: center;
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;
