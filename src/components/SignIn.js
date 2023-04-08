@@ -24,20 +24,21 @@ class SignIn extends React.Component {
         email: this.state.signInEmail,
         password: this.state.signInPassword,
       })
-        .then(response => response.json())
-        .then(data => {
-          if (data === "Success!") {
-            this.props.onRouteChange("home")
-          }
-        })
     })
+      .then(response => response.json())
+      .then(user => {
+        if (user.id) {
+          this.props.loadUser(user)
+          this.props.onRouteChange("home")
+        }
+      })
   }
   render() {
     const { onRouteChange } = this.props
     return (
       <article className="br3 ba shadow-5 b--black-10 mv4 w-100 w-50-m w-25-1 mw6 center">
         <main className="pa4 black-80">
-          <form className="measure ">
+          <div className="measure ">
             <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
               <legend className="f1 fw6 ph0 mh0">Sign In</legend>
               <div className="mt3">
@@ -66,7 +67,7 @@ class SignIn extends React.Component {
             <div className="lh-copy mt3">
               <p onClick={() => onRouteChange("register")} className="f6 link dim black db">Register</p>
             </div>
-          </form>
+          </div>
         </main>
       </article>
     )
