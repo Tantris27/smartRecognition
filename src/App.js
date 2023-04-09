@@ -9,57 +9,57 @@ import Rank from './components/Rank';
 import Register from './components/Register';
 import SignIn from './components/SignIn';
 
-const setUpClarifai = (imageUrl) => {
-  const PAT = '02aeb3daadd3488bbd41ef2f0a3af7a2';
-  const USER_ID = 'pr0methe4n_gutz';
-  const APP_ID = 'faceTestApp';
-  const IMAGE_URL = imageUrl;
-  const raw = JSON.stringify({
-    "user_app_id": {
-      "user_id": USER_ID,
-      "app_id": APP_ID
-    },
-    "inputs": [
-      {
-        "data": {
-          "image": {
-            "url": IMAGE_URL
-          }
-        }
-      }
-    ]
-  });
+// const setUpClarifai = (imageUrl) => {
+//
+//   const USER_ID = 'pr0methe4n_gutz';
+//   const APP_ID = 'faceTestApp';
+//   const IMAGE_URL = imageUrl;
+//   const raw = JSON.stringify({
+//     "user_app_id": {
+//       "user_id": USER_ID,
+//       "app_id": APP_ID
+//     },
+//     "inputs": [
+//       {
+//         "data": {
+//           "image": {
+//             "url": IMAGE_URL
+//           }
+//         }
+//       }
+//     ]
+//   });
 
-  const requestOptions = {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Key ' + PAT
-    },
-    body: raw
-  };
-  return requestOptions
+// const requestOptions = {
+//   method: 'POST',
+//   headers: {
+//     'Accept': 'application/json',
+//     'Authorization': 'Key ' + PAT
+//   },
+//   body: raw
+// };
+// return requestOptions
+// }
+const initialState = {
+  input: "",
+  imageURL: "",
+  box: {},
+  route: "signIn",
+  isSignedIn: false,
+  user: {
+    id: "",
+    name: "",
+    email: "",
+    password: "",
+    joined: "",
+    entries: 0
+  }
 }
-
 class App extends Component {
 
   constructor() {
     super();
-    this.state = {
-      input: "",
-      imageURL: "",
-      box: {},
-      route: "signIn",
-      isSignedIn: false,
-      user: {
-        id: "",
-        name: "",
-        email: "",
-        password: "",
-        joined: "",
-        entries: 0
-      }
-    }
+    this.state = initialState
   }
   loadUser = (userData) => {
     this.setState({
@@ -73,6 +73,7 @@ class App extends Component {
       }
     })
   }
+
   claculateFaceLocation = (data) => {
     const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box
     const image = document.getElementById("inputImage")
@@ -89,22 +90,26 @@ class App extends Component {
     this.setState({ box })
   }
   onRouteChange = (route) => {
-    if (route === "home") {
+    if (route === "signOut") {
+      this.setState(initialState)
+    } else if (route === "home") {
       this.setState({ isSignedIn: true })
-      this.setState({ route })
-    } else {
-      this.setState({ isSignedIn: false })
-      this.setState({ route })
     }
-
+    this.setState({ route })
   }
   onInputChange = (event) => {
     this.setState({ input: event.target.value })
   }
   onSubmit = () => {
     this.setState({ imageURL: this.state.input })
-
-    fetch(`https://api.clarifai.com/v2/models/face-detection/outputs`, setUpClarifai(this.state.input))
+    console.log(this.state.input)
+    fetch('http://localhost:3000/imageurl', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        input: this.state.input
+      })
+    })
       .then(response => response.json())
       .then(data => {
         if (data) {
@@ -121,6 +126,7 @@ class App extends Component {
                 entries: count
               }))
             })
+            .catch(err => console.log(err))
         }
         this.displayFaceBox(this.claculateFaceLocation(data))
       })
