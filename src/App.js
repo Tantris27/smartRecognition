@@ -9,6 +9,8 @@ import Rank from './components/Rank';
 import Register from './components/Register';
 import SignIn from './components/SignIn';
 
+const url = "https://face-recognitionbe.onrender.com"
+
 // const setUpClarifai = (imageUrl) => {
 //
 //   const USER_ID = 'pr0methe4n_gutz';
@@ -103,7 +105,7 @@ class App extends Component {
   onSubmit = () => {
     this.setState({ imageURL: this.state.input })
     console.log(this.state.input)
-    fetch('http://localhost:3000/imageurl', {
+    fetch(`${url}/imageurl`, {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -113,7 +115,7 @@ class App extends Component {
       .then(response => response.json())
       .then(data => {
         if (data) {
-          fetch("http://localhost:3000/image", {
+          fetch(`${url}/image`, {
             method: "put",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
